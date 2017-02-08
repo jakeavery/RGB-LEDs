@@ -1,5 +1,7 @@
 import pigpio
 from time import sleep
+from tkinter import *
+from tkinter.colorchooser import *
 
 pi = pigpio.pi('192.168.1.12', 8888)        # Connect to the local Pi
 
@@ -40,7 +42,7 @@ def breathe(color, time=1):
         
 color1 = [255, 83, 13]
 color2 = [255, 13, 255]
-        
+       
 def fade(color1=color1, color2=color2, time=1, strip=3):
     # Reset each color
     for i in pins_used:
@@ -49,7 +51,7 @@ def fade(color1=color1, color2=color2, time=1, strip=3):
     strip2_levels = [0, 0, 0]
     # Determine steps needed
     steps = time / freq
-    # Initialize delta tuple
+    # Initialize delta list
     delta = [0, 0, 0]
     # Get initial levels
     for i in range(3):
@@ -73,3 +75,63 @@ def fade(color1=color1, color2=color2, time=1, strip=3):
                     delta[i] = -delta[i]
                 pi.set_PWM_dutycycle(strip2[i], strip2_levels[i])   
         sleep(freq)
+
+def getColor():
+    color = askcolor()
+    rgb = color[0]
+    red = int(rgb[0])
+    green = int(rgb[1])
+    blue = int(rgb[2])
+    pi.set_PWM_dutycycle(strip1[0], red)
+    pi.set_PWM_dutycycle(strip1[1], green)
+    pi.set_PWM_dutycycle(strip1[2], blue)
+
+def setBoth():
+    color = askcolor()
+    rgb = color[0]
+    red = int(rgb[0])
+    green = int(rgb[1])
+    blue = int(rgb[2])
+    # Strip 1
+    pi.set_PWM_dutycycle(strip1[0], red)
+    pi.set_PWM_dutycycle(strip1[1], green)
+    pi.set_PWM_dutycycle(strip1[2], blue)
+    # Strip 2
+    pi.set_PWM_dutycycle(strip2[0], red)
+    pi.set_PWM_dutycycle(strip2[1], green)
+    pi.set_PWM_dutycycle(strip2[2], blue)
+
+def setStripOne():
+    color = askcolor()
+    rgb = color[0]
+    red = int(rgb[0])
+    green = int(rgb[1])
+    blue = int(rgb[2])
+    # Strip 1
+    pi.set_PWM_dutycycle(strip1[0], red)
+    pi.set_PWM_dutycycle(strip1[1], green)
+    pi.set_PWM_dutycycle(strip1[2], blue)
+    
+def setStripTwo():
+    color = askcolor()
+    rgb = color[0]
+    red = int(rgb[0])
+    green = int(rgb[1])
+    blue = int(rgb[2])
+    # Strip 2
+    pi.set_PWM_dutycycle(strip2[0], red)
+    pi.set_PWM_dutycycle(strip2[1], green)
+    pi.set_PWM_dutycycle(strip2[2], blue)
+    
+def lightsOff():
+    # Strip 1
+    pi.set_PWM_dutycycle(strip1[0], 0)
+    pi.set_PWM_dutycycle(strip1[1], 0)
+    pi.set_PWM_dutycycle(strip1[2], 0)
+    # Strip 2
+    pi.set_PWM_dutycycle(strip2[0], 0)
+    pi.set_PWM_dutycycle(strip2[1], 0)
+    pi.set_PWM_dutycycle(strip2[2], 0)
+    
+
+    
