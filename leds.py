@@ -133,5 +133,68 @@ def lightsOff():
     pi.set_PWM_dutycycle(strip2[1], 0)
     pi.set_PWM_dutycycle(strip2[2], 0)
     
+def fade2(time=1):
+    # Get color 1
+    color1 = askcolor()
+    rgb1 = color1[0]
+    red1 = int(rgb1[0])
+    green1 = int(rgb1[1])
+    blue1 = int(rgb1[2])
+    
+    # Set to color 1
+    # Strip 1
+    pi.set_PWM_dutycycle(strip1[0], red1)
+    pi.set_PWM_dutycycle(strip1[1], green1)
+    pi.set_PWM_dutycycle(strip1[2], blue1)
+    # Strip 2
+    pi.set_PWM_dutycycle(strip2[0], red1)
+    pi.set_PWM_dutycycle(strip2[1], green1)
+    pi.set_PWM_dutycycle(strip2[2], blue1)
 
+    # Get color 2
+    color2 = askcolor()
+    rgb2 = color2[0]
+    red2 = int(rgb2[0])
+    green2 = int(rgb2[1])
+    blue2 = int(rgb2[2])
+    
+    strip1_levels = [0, 0, 0]
+    strip2_levels = [0, 0, 0]
+    # Get initial levels
+    strip1_levels[0] = pi.get_PWM_dutycycle(strip1[0])
+    strip1_levels[1] = pi.get_PWM_dutycycle(strip1[1])
+    strip1_levels[2] = pi.get_PWM_dutycycle(strip1[2])
+    strip2_levels[0] = pi.get_PWM_dutycycle(strip2[0])
+    strip2_levels[1] = pi.get_PWM_dutycycle(strip2[1])
+    strip2_levels[2] = pi.get_PWM_dutycycle(strip2[2])
+    
+    # Determine steps needed
+    steps = time / freq
+    # Initialize delta list
+    delta = [0, 0, 0]
+
+    # Determine amount to change each step
+    delta[0] = (red2 - red1) / steps
+    delta[1] = (green2 - green1) / steps
+    delta[2] = (blue2 - blue1) / steps
+    
+    # Loop
+    while True:
+        # Strip 1
+        strip1_levels[0] += delta[0]
+        if strip1_levels[0] < min_level or strip1_levels[0] > max_level:
+            delta[0] = -delta[0]
+        pi.set_PWM_dutycycle(strip1[0], strip1_levels[0])
+        
+        strip1_levels[1] += delta[1]
+        if strip1_levels[1] < min_level or strip1_levels[1] > max_level:
+            delta[1] = -delta[1]
+        pi.set_PWM_dutycycle(strip1[1], strip1_levels[1])
+        
+        strip1_levels[2] += delta[2]
+        if strip1_levels[2] < min_level or strip1_levels[2] > max_level:
+            delta[2] = -delta[2]
+        pi.set_PWM_dutycycle(strip1[2], strip1_levels[2]) 
+         
+        sleep(freq)
     
